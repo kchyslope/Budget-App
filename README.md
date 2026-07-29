@@ -28,9 +28,7 @@ python3 gui.py
 
 A browser version of the same demo (JavaScript port of the `Category` class and spend chart) lives in [`docs/`](docs/) and is published via GitHub Pages:
 
-**https://kchyslope.github.io/Budget-App/**
-
-(If the link 404s, enable Pages in the repo's Settings → Pages, with source set to the `main` branch, `/docs` folder.)
+**https://kchyslope.github.io/budgetapp_fcc/**
 
 ## Attribution
 
