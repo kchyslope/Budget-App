@@ -15,3 +15,15 @@ pip install -r requirements.txt
 ```bash
 python3 main.py
 ```
+
+## GUI Demo
+
+A tkinter demo GUI is available for exploring the `Category` class (deposit, withdraw, transfer, spend chart):
+
+```bash
+python3 gui.py
+```
+
+## Attribution
+
+This project is based on the [Budget App](https://www.freecodecamp.org/learn/scientific-computing-with-python/scientific-computing-with-python-projects/budget-app) certification project from freeCodeCamp's Scientific Computing with Python curriculum.
