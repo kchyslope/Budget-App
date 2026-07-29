@@ -24,6 +24,14 @@ A tkinter demo GUI is available for exploring the `Category` class (deposit, wit
 python3 gui.py
 ```
 
+## Web Demo
+
+A browser version of the same demo (JavaScript port of the `Category` class and spend chart) lives in [`docs/`](docs/) and is published via GitHub Pages:
+
+**https://kchyslope.github.io/Budget-App/**
+
+(If the link 404s, enable Pages in the repo's Settings → Pages, with source set to the `main` branch, `/docs` folder.)
+
 ## Attribution
 
 This project is based on the [Budget App](https://www.freecodecamp.org/learn/scientific-computing-with-python/scientific-computing-with-python-projects/budget-app) certification project from freeCodeCamp's Scientific Computing with Python curriculum.

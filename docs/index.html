@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Budget App Demo</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f7f7f8;
+    --panel: #ffffff;
+    --border: #d9d9de;
+    --text: #1c1c1f;
+    --muted: #6b6b74;
+    --accent: #2f6fed;
+    --accent-hover: #1f5adf;
+    --danger: #c4432b;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #17181c;
+      --panel: #202127;
+      --border: #34353c;
+      --text: #eceef1;
+      --muted: #9a9ba3;
+      --accent: #5b8def;
+      --accent-hover: #7aa4f2;
+      --danger: #e0705a;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    justify-content: center;
+    padding: 2rem 1rem;
+  }
+  .app {
+    display: flex;
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 900px;
+  }
+  h1 {
+    font-size: 1.1rem;
+    margin: 0 0 1rem;
+  }
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem;
+  }
+  .categories {
+    flex: 0 0 220px;
+    display: flex;
+    flex-direction: column;
+  }
+  .ledger {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  ul#category-list {
+    list-style: none;
+    margin: 0 0 0.75rem;
+    padding: 0;
+    flex: 1;
+    overflow-y: auto;
+  }
+  ul#category-list li {
+    padding: 0.5rem 0.6rem;
+    border-radius: 6px;
+    cursor: pointer;
+    color: var(--text);
+  }
+  ul#category-list li:hover {
+    background: var(--border);
+  }
+  ul#category-list li.selected {
+    background: var(--accent);
+    color: white;
+  }
+  .add-row {
+    display: flex;
+    gap: 0.4rem;
+  }
+  input, select {
+    background: var(--bg);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.4rem 0.5rem;
+    font-size: 0.9rem;
+  }
+  input[type="text"], input[type="number"] {
+    width: 100%;
+  }
+  button {
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 0.45rem 0.8rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+  button:hover { background: var(--accent-hover); }
+  button.secondary {
+    background: transparent;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+  }
+  pre#ledger-output {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.75rem;
+    font-family: "SF Mono", Menlo, monospace;
+    font-size: 0.85rem;
+    flex: 1;
+    min-height: 260px;
+    white-space: pre;
+    overflow: auto;
+  }
+  .actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+    flex-wrap: wrap;
+  }
+  .muted { color: var(--muted); font-size: 0.85rem; }
+  dialog {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--panel);
+    color: var(--text);
+    padding: 1rem 1.25rem;
+    min-width: 260px;
+  }
+  dialog::backdrop { background: rgba(0,0,0,0.4); }
+  dialog h2 { font-size: 1rem; margin-top: 0; }
+  dialog label { display: block; margin-top: 0.6rem; font-size: 0.85rem; }
+  dialog .dialog-actions { margin-top: 1rem; display: flex; justify-content: flex-end; gap: 0.5rem; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="panel categories">
+    <h1>Categories</h1>
+    <ul id="category-list"></ul>
+    <div class="add-row">
+      <input type="text" id="new-category-name" placeholder="New category">
+      <button id="add-category-btn">Add</button>
+    </div>
+  </div>
+
+  <div class="panel ledger">
+    <h1 id="ledger-title">Select a category</h1>
+    <pre id="ledger-output"></pre>
+    <div class="actions">
+      <button id="deposit-btn">Deposit</button>
+      <button id="withdraw-btn">Withdraw</button>
+      <button id="transfer-btn">Transfer</button>
+      <button class="secondary" id="chart-btn">Show Spend Chart</button>
+    </div>
+  </div>
+</div>
+
+<dialog id="amount-dialog">
+  <h2 id="amount-dialog-title">Deposit</h2>
+  <label id="transfer-target-label" style="display:none">
+    Transfer to
+    <select id="transfer-target"></select>
+  </label>
+  <label>
+    Amount
+    <input type="number" id="amount-input" min="0.01" step="0.01">
+  </label>
+  <label>
+    Description (optional)
+    <input type="text" id="description-input">
+  </label>
+  <div class="dialog-actions">
+    <button class="secondary" id="amount-cancel">Cancel</button>
+    <button id="amount-confirm">Confirm</button>
+  </div>
+</dialog>
+
+<dialog id="chart-dialog">
+  <h2>Percentage Spent by Category</h2>
+  <pre id="chart-output"></pre>
+  <div class="dialog-actions">
+    <button id="chart-close">Close</button>
+  </div>
+</dialog>
+
+<script src="budget.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
